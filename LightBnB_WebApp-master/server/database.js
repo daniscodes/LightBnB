@@ -1,15 +1,4 @@
-const { Pool } = require('pg');
-const { password } = require('../pSQLConfig.js');
-const users = require('./json/users.json');
-const properties = require('./json/properties.json');
-
-const pool = new Pool({
-  user: 'postgres',
-  password,
-  host: 'localhost',
-  database: 'lightbnb'
-});
-
+const db = require('../db');
 
 /// Users
 
@@ -19,16 +8,11 @@ const pool = new Pool({
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithEmail = function(email) {
-  pool.query(`
-  SELECT * FROM users WHERE email = $1
-`,[email]).then(resp => {
-  console.log(resp.rows)
-});
-
-
-return pool.query(`
-  SELECT * FROM users WHERE email = $1
-`,[email]).then(resp => resp.rows[0]);
+  return db.query(`
+    SELECT *
+    FROM users
+    WHERE email = $1
+  `,[email]).then(resp => resp.rows[0]);
 };
 exports.getUserWithEmail = getUserWithEmail;
 
@@ -38,7 +22,7 @@ exports.getUserWithEmail = getUserWithEmail;
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithId = function(id) {
-  return pool.query(`
+  return db.query(`
   SELECT *
   FROM users
   WHERE id = $1
